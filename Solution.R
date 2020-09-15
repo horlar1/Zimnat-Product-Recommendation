@@ -152,53 +152,7 @@ df_test$product_cluster = kmns$cluster[66354:76353]
 df_train = cbind(df_train,new_target)
 df_test = cbind(df_test,target2)
 
-#########################################
-############# DON'T RUN
-#######################################
-#### TWO WAY INTERACTIONS
-#############
-# num.features = 
-# ######
-# start.time = Sys.time()
-# df_train$y = label
-# num.pairs = data.frame(t(combn(as.character(num.features), 2)), stringsAsFactors = F)
-# num.pairs$pv = NA
-# Store(num.pairs)
-# for (i in 1:nrow(num.pairs)) {
-#   frmla.alte=as.formula(paste('y ~', num.pairs$X1[i], '+', num.pairs$X2[i]))
-#   frmla.mul=as.formula(paste('y ~', num.pairs$X1[i], '*', num.pairs$X2[i]))
-#   num.pairs$pv[i] = anova(glm(frmla.alte, df_train, family = "gaussian"),
-#     glm(frmla.mul, df_train, family = "gaussian"),
-#     test = 'Chisq')$`Pr(>Chi)`[2]
-# }
-# head(num.pairs)
-# gc(reset = T)
-# 
-# total.time = Sys.time() - start.time
-# total.time
-# 
-# num.pairs$log = log(num.pairs$pv)
-# nn = num.pairs %>% filter(log < -50)
-# 
-# ##########
-# start.time = Sys.time()
-# w = data.frame(id =c(1:66353))
-# w2 = data.frame(id =c(1:10000))
-# for (i in 1:nrow(nn)){
-# 
-#   ######
-#   var1 = nn[i,1]
-#   var2 = nn[i,2]
-#   var = paste(var1,var2,"Mult" ,sep = "_")
-#   w[,var] = as.numeric(df_train[,var1]) * as.numeric(df_train[,var2])
-#   w2[,var] = as.numeric(df_test[,var1]) * as.numeric(df_test[,var2])
-#   var = paste(var1,var2,"Add" ,sep = "_")
-#   w[,var] = as.numeric(df_train[,var1]) + as.numeric(df_train[,var2])
-#   w2[,var] = as.numeric(df_test[,var1]) + as.numeric(df_test[,var2])
-# }
-# rm(tmp) ;gc(reset = T)
-# total.time = Sys.time() - start.time
-# total.time
+
 load(paste0(save.files.dir,"/train_2way_features.RData"))
 load(paste0(save.files.dir,"/test_2way_features.RData"))
 
@@ -556,9 +510,3 @@ final_sub = final_sub %>% select(`ID X PCODE`,pred)
 ##### FINAL OUTPUT
 fwrite(final_sub,file = paste0(subm.dir,"/final.csv"),row.names = F)
 
-### DATA OUTPUT
-final_data = cbind(df_train,lgb_oof,cat_oof,lgb_oof2,xgb_oof)
-final_test = cbind(df_test,lgb_pred,cat_pred,lgb_pred2,xgb_pred)
-
-fwrite(final_data, file = paste0(data.dir,"/final_data.csv"),row.names = F)
-fwrite(final_test, file = paste0(data.dir,"/final_test.csv"),row.names = F)
